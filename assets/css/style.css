@@ -158,12 +158,12 @@ h6 {
 
 /* Header Top */
 #header.header-top {
-  height: 80px;
+  height: 100px;
   position: fixed;
   left: 0;
   top: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 1);
 }
 
 #header.header-top .social-links,
@@ -1233,3 +1233,58 @@ section .container {
   max-height: 50px; 
 }
 
+.image-container {
+  position: relative;
+  display: inline-block; /* Используйте block, если изображение должно быть на полную ширину контейнера */
+  text-align: center;
+}
+
+.img-fluid {
+  opacity: 65%;
+  width: 100%; 
+  /* max-height: 50; 
+  max-width: 50;  */
+
+}
+
+.centered-text {
+  font-size: xx-large;
+  /* background-color: #040404; */
+  display: block;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: 900;
+  position: absolute; /* Позиционируем текст относительно его ближайшего позиционированного предка */
+  top: 50%; /* Положение текста от верхнего края изображения */
+  left: 50%; /* Положение текста от левого края изображения */
+  transform: translate(-50%, -50%); /* Сдвигаем текст на 50% его ширины и высоты назад, чтобы центрировать его точно по центру */
+  color: rgb(255, 255, 255); /* Цвет текста, выбирайте контрастный цвет для лучшей видимости */
+  /* Дополнительные стили для текста: размер шрифта, семейство шрифтов и т.д. */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 80%; /* Добавлено */
+  min-width: 20%;
+  padding: 10px; /* Добавлено */
+  box-sizing: border-box; /* Добавлено */
+}
+
+
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.project {
+  flex-basis: calc(33.33% - 20px);
+  margin-bottom: 20px;
+}
+
+.project img {
+  width: 100%;
+  height: auto;
+}
+.project p {
+  font-size: small;
+}
+.project h3 {
+  font-size: medium;
+}
