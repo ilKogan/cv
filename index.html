@@ -1,199 +1,434 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<title>Radio</title>
-		<style>
-html, body, #canvas {
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космическое Радио</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
 
-body {
-	color: white;
-	background-color: black;
-	overflow: hidden;
-	touch-action: none;
-}
+        .space {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            z-index: -2;
+        }
 
-#canvas {
-	display: block;
-}
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
-#canvas:focus {
-	outline: none;
-}
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
 
-#status, #status-splash, #status-progress {
-	position: absolute;
-	left: 0;
-	right: 0;
-}
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
 
-#status, #status-splash {
-	top: 0;
-	bottom: 0;
-}
+        .radio-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-#status {
-	background-color: #242424;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	visibility: hidden;
-}
+        .play-button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+            z-index: 20;
+        }
 
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
-}
+        .play-button:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.8);
+        }
 
-#status-progress, #status-notice {
-	display: none;
-}
+        .play-button::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
 
-#status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
-}
+        .play-button::after {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            animation: pulse 3s infinite;
+        }
 
-#status-notice {
-	background-color: #5b3943;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-	line-height: 1.3;
-	margin: 0 2rem;
-	overflow: hidden;
-	padding: 1rem;
-	text-align: center;
-	z-index: 1;
-}
-		</style>
-		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
-<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            70% { transform: scale(1.2); opacity: 0; }
+            100% { opacity: 0; }
+        }
 
-	</head>
-	<body>
-		<canvas id="canvas">
-			Your browser does not support the canvas tag.
-		</canvas>
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 30px solid white;
+            margin-left: 5px;
+        }
 
-		<noscript>
-			Your browser does not support JavaScript.
-		</noscript>
+        .pause-icon {
+            width: 30px;
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-		<div id="status">
-			<img id="status-splash" src="index.png" alt="">
-			<progress id="status-progress"></progress>
-			<div id="status-notice"></div>
-		</div>
+        .pause-icon::before,
+        .pause-icon::after {
+            content: '';
+            width: 10px;
+            height: 100%;
+            background: white;
+        }
 
-		<script src="index.js"></script>
-		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":78560,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
-const GODOT_THREADS_ENABLED = false;
-const engine = new Engine(GODOT_CONFIG);
+        .halo {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 150, 255, 0.2) 0%, rgba(0, 150, 255, 0) 70%);
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.3s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-(function () {
-	const statusOverlay = document.getElementById('status');
-	const statusProgress = document.getElementById('status-progress');
-	const statusNotice = document.getElementById('status-notice');
+        .title {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
+            width: 100%;
+            text-align: center;
+            z-index: 15;
+        }
 
-	let initializing = true;
-	let statusMode = '';
+        .status {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            opacity: 0.7;
+            width: 100%;
+            text-align: center;
+            z-index: 15;
+        }
 
-	function setStatusMode(mode) {
-		if (statusMode === mode || !initializing) {
-			return;
-		}
-		if (mode === 'hidden') {
-			statusOverlay.remove();
-			initializing = false;
-			return;
-		}
-		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
-		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
-		statusMode = mode;
-	}
+        /* Горизонтальные спектрометры */
+        .spectrum-container {
+            position: absolute;
+            width: 100%;
+            height: 60px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+        }
 
-	function setStatusNotice(text) {
-		while (statusNotice.lastChild) {
-			statusNotice.removeChild(statusNotice.lastChild);
-		}
-		const lines = text.split('\n');
-		lines.forEach((line) => {
-			statusNotice.appendChild(document.createTextNode(line));
-			statusNotice.appendChild(document.createElement('br'));
-		});
-	}
+        .spectrum-left, .spectrum-right {
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+        }
 
-	function displayFailureNotice(err) {
-		console.error(err);
-		if (err instanceof Error) {
-			setStatusNotice(err.message);
-		} else if (typeof err === 'string') {
-			setStatusNotice(err);
-		} else {
-			setStatusNotice('An unknown error occured');
-		}
-		setStatusMode('notice');
-		initializing = false;
-	}
+        .spectrum-left {
+            flex-direction: row-reverse;
+            margin-right: 50px;
+        }
 
-	const missing = Engine.getMissingFeatures({
-		threads: GODOT_THREADS_ENABLED,
-	});
+        .spectrum-right {
+            margin-left: 50px;
+            transform: scaleX(-1);
+        }
 
-	if (missing.length !== 0) {
-		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
-			// There's a chance that installing the service worker would fix the issue
-			Promise.race([
-				navigator.serviceWorker.getRegistration().then((registration) => {
-					if (registration != null) {
-						return Promise.reject(new Error('Service worker already exists.'));
-					}
-					return registration;
-				}).then(() => engine.installServiceWorker()),
-				// For some reason, `getRegistration()` can stall
-				new Promise((resolve) => {
-					setTimeout(() => resolve(), 2000);
-				}),
-			]).catch((err) => {
-				console.error('Error while registering service worker:', err);
-			}).then(() => {
-				window.location.reload();
-			});
-		} else {
-			// Display the message as usual
-			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
-			displayFailureNotice(missingMsg + missing.join('\n'));
-		}
-	} else {
-		setStatusMode('progress');
-		engine.startGame({
-			'onProgress': function (current, total) {
-				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
-				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
-				}
-			},
-		}).then(() => {
-			setStatusMode('hidden');
-		}, displayFailureNotice);
-	}
-}());
-		</script>
-	</body>
+        .spectrum-bar {
+            width: 4px;
+            margin: 0 1px;
+            background: linear-gradient(to top, #00a2ff, #00ffe9);
+            border-radius: 2px;
+            transform-origin: bottom center;
+            transition: height 0.1s ease-out, opacity 0.1s ease-out;
+            box-shadow: 0 0 5px rgba(0, 162, 255, 0.7);
+            opacity: 0.0; /* Начальная прозрачность */
+        }
+    </style>
+</head>
+<body>
+    <div class="space"></div>
+    <div class="stars"></div>
+    
+    <div class="radio-wrapper">
+        <div class="halo"></div>
+        
+        <!-- Горизонтальные спектрометры -->
+        <div class="spectrum-container">
+            <div class="spectrum-left" id="spectrumLeft"></div>
+            <div class="spectrum-right" id="spectrumRight"></div>
+        </div>
+        
+        <div class="play-button" id="playButton">
+            <div class="play-icon" id="playIcon"></div>
+        </div>
+        <div class="title">Космическое Радио</div>
+        <div class="status" id="status">Нажмите для запуска</div>
+    </div>
+
+    <audio id="audio" crossorigin="anonymous"></audio>
+
+    <script>
+        // Создание звезд
+        const starsContainer = document.querySelector('.stars');
+        const starCount = 200;
+        
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            const size = Math.random() * 3;
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const duration = 2 + Math.random() * 3;
+            
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            star.style.setProperty('--duration', `${duration}s`);
+            
+            starsContainer.appendChild(star);
+        }
+
+        // Создание горизонтальных спектрометров
+        const spectrumLeft = document.getElementById('spectrumLeft');
+        const spectrumRight = document.getElementById('spectrumRight');
+        const barCount = 60;
+        
+        for (let i = 0; i < barCount; i++) {
+            const barLeft = document.createElement('div');
+            barLeft.classList.add('spectrum-bar');
+            barLeft.style.height = `${5 + Math.random() * 10}px`;
+            spectrumLeft.appendChild(barLeft);
+            
+            const barRight = document.createElement('div');
+            barRight.classList.add('spectrum-bar');
+            barRight.style.height = `${5 + Math.random() * 10}px`;
+            spectrumRight.appendChild(barRight);
+        }
+
+        // Аудио и кнопка
+        const audio = document.getElementById('audio');
+        const playButton = document.getElementById('playButton');
+        const playIcon = document.getElementById('playIcon');
+        const statusElement = document.getElementById('status');
+        const halo = document.querySelector('.halo');
+        const spectrumBarsLeft = document.querySelectorAll('#spectrumLeft .spectrum-bar');
+        const spectrumBarsRight = document.querySelectorAll('#spectrumRight .spectrum-bar');
+        
+        let isPlaying = false;
+        let audioContext, analyser, dataArray;
+        let animationId;
+        
+        // Ссылка на радиостанцию
+        const radioStreamUrl = 'https://a8.radioheart.ru:9042/RH55620';
+        
+        // Для обхода ограничений CORS
+        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+        const proxiedStreamUrl = corsProxy + radioStreamUrl;
+        
+        playButton.addEventListener('click', togglePlay);
+        
+        function togglePlay() {
+            if (isPlaying) {
+                stopRadio();
+            } else {
+                startRadio();
+            }
+        }
+        
+        function startRadio() {
+            statusElement.textContent = 'Подключаемся...';
+            
+            audio.src = proxiedStreamUrl;
+            audio.crossOrigin = 'anonymous';
+            
+            const onPlaySuccess = () => {
+                isPlaying = true;
+                playIcon.innerHTML = '';
+                const pauseIcon = document.createElement('div');
+                pauseIcon.classList.add('pause-icon');
+                playIcon.appendChild(pauseIcon);
+                statusElement.textContent = 'Соединение установлено';
+                
+                setupAudioAnalyser();
+            };
+            
+            const onPlayError = (error) => {
+                console.error('Ошибка воспроизведения:', error);
+                statusElement.textContent = 'Ошибка подключения. Попробуйте ещё раз.';
+                
+                if (audio.src !== radioStreamUrl) {
+                    statusElement.textContent = 'Пробуем прямое подключение...';
+                    audio.src = radioStreamUrl;
+                    audio.play().then(onPlaySuccess).catch(() => {
+                        statusElement.textContent = 'Не удалось подключиться к радиостанции';
+                    });
+                }
+            };
+            
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(onPlaySuccess).catch(onPlayError);
+            }
+        }
+        
+        function setupAudioAnalyser() {
+            if (!window.AudioContext && !window.webkitAudioContext) {
+                console.warn('Web Audio API не поддерживается');
+                return;
+            }
+            
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioContext = new AudioContext();
+                const source = audioContext.createMediaElementSource(audio);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
+                animate();
+            } catch (error) {
+                console.error('Ошибка AudioContext:', error);
+            }
+        }
+        
+        function stopRadio() {
+            audio.pause();
+            isPlaying = false;
+            playIcon.innerHTML = '';
+            const playIconTriangle = document.createElement('div');
+            playIconTriangle.classList.add('play-icon');
+            playIcon.appendChild(playIconTriangle);
+            statusElement.textContent = 'Воспроизведение остановлено';
+            
+            if (audioContext) {
+                audioContext.close().catch(e => console.log(e));
+                audioContext = null;
+            }
+            cancelAnimationFrame(animationId);
+            
+            spectrumBarsLeft.forEach(bar => {
+                bar.style.height = `${5 + Math.random() * 10}px`;
+                bar.style.opacity = '0.0';
+            });
+            
+            spectrumBarsRight.forEach(bar => {
+                bar.style.height = `${5 + Math.random() * 10}px`;
+                bar.style.opacity = '0.0';
+            });
+            
+            halo.style.opacity = '0';
+        }
+        
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            if (!analyser) return;
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            const bass = dataArray[0] / 255;
+            halo.style.opacity = bass.toString();
+            halo.style.transform = `translate(-50%, -50%) scale(${1 + bass * 0.5})`;
+            
+            // Анимация спектрометров
+            spectrumBarsLeft.forEach((bar, i) => {
+                const index = Math.floor(i * (dataArray.length / barCount));
+                const value = dataArray[index] / 255;
+                const height = 5 + value * 60;
+                
+                bar.style.height = `${height}px`;
+                // Прозрачность зависит от высоты (чем меньше высота, тем прозрачнее)
+                bar.style.opacity = 0.0 + value * 0.7;
+                
+                const hue = 180 + value * 60;
+                bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
+                bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
+            });
+            
+            spectrumBarsRight.forEach((bar, i) => {
+                const mirrorIndex = barCount - i - 1;
+                const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
+                const height = 5 + value * 60;
+                
+                bar.style.height = `${height}px`;
+                // Прозрачность зависит от высоты (чем меньше высота, тем прозрачнее)
+                bar.style.opacity = 0.0 + value * 0.7;
+                
+                const hue = 180 + value * 60;
+                bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
+                bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
+            });
+        }
+    </script>
+</body>
 </html>
-
