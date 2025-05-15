@@ -38,7 +38,7 @@ body {
 }
 
 #status {
-	background-color: #242424;
+	background-color: #000000;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -75,6 +75,20 @@ body {
 	text-align: center;
 	z-index: 1;
 }
+
+/* New loader styles */
+.loader {
+	width: 50px;
+	height: 50px;
+	border: 3px solid rgba(255, 255, 255, 0.3);
+	border-radius: 50%;
+	border-top-color: #fff;
+	animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
@@ -90,7 +104,7 @@ body {
 		</noscript>
 
 		<div id="status">
-			<img id="status-splash" src="index.png" alt="">
+			<div class="loader"></div>
 			<progress id="status-progress"></progress>
 			<div id="status-notice"></div>
 		</div>
@@ -196,4 +210,3 @@ const engine = new Engine(GODOT_CONFIG);
 		</script>
 	</body>
 </html>
-
