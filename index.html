@@ -100,6 +100,7 @@
             border-bottom: 20px solid transparent;
             border-left: 30px solid white;
             margin-left: 5px;
+            transition: all 0.2s;
         }
         .pause-icon {
             width: 30px;
@@ -113,6 +114,9 @@
             width: 10px;
             height: 100%;
             background: white;
+        }
+        .hidden {
+            display: none;
         }
         .halo {
             position: absolute;
@@ -240,6 +244,7 @@
 
         <div class="play-button" id="playButton">
             <div class="play-icon" id="playIcon"></div>
+            <div class="pause-icon hidden" id="pauseIcon"></div>
         </div>
         <div class="title">Космическое Радио</div>
         <div class="status" id="status">Нажмите для запуска</div>
@@ -289,21 +294,25 @@
         const audio = document.getElementById('audio');
         const playButton = document.getElementById('playButton');
         const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
         const statusElement = document.getElementById('status');
         const halo = document.querySelector('.halo');
         let isPlaying = false;
         let audioContext, analyser, dataArray;
         let animationId;
 
-        const radioStreamUrl = 'https://a8.radioheart.ru:9042/RH55620 ';
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/ ';
+        const radioStreamUrl = 'https://a8.radioheart.ru:9042/RH55620';
+        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
         const proxiedStreamUrl = corsProxy + radioStreamUrl;
 
         playButton.addEventListener('click', togglePlay);
 
         function togglePlay() {
-            if (isPlaying) stopRadio();
-            else startRadio();
+            if (isPlaying) {
+                stopRadio();
+            } else {
+                startRadio();
+            }
         }
 
         function startRadio() {
@@ -313,7 +322,8 @@
 
             const onPlaySuccess = () => {
                 isPlaying = true;
-                playIcon.innerHTML = '<div class="pause-icon"></div>';
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
                 statusElement.textContent = 'Соединение установлено';
                 setupAudioAnalyser();
             };
@@ -359,7 +369,8 @@
         function stopRadio() {
             audio.pause();
             isPlaying = false;
-            playIcon.innerHTML = '<div class="play-icon"></div>';
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
             statusElement.textContent = 'Воспроизведение остановлено';
             if (audioContext) {
                 audioContext.close().catch(e => console.log(e));
