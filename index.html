@@ -264,7 +264,7 @@
             starsContainer.appendChild(star);
         }
 
-        const barCount = 60;
+        const barCount = 30;
 
         // Создание спектральных полос
         function createSpectrumBars(containerId) {
@@ -386,7 +386,7 @@
                 const value = dataArray[index] / 255;
                 const height = 5 + value * 60;
                 bar.style.height = `${height}px`;
-                bar.style.opacity = 0.3 + value * 0.7;
+                bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
                 bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
                 bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
@@ -397,7 +397,7 @@
                 const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
                 const height = 5 + value * 60;
                 bar.style.height = `${height}px`;
-                bar.style.opacity = 0.3 + value * 0.7;
+                bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
                 bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
                 bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
@@ -408,7 +408,7 @@
                 const value = dataArray[index] / 255;
                 const height = 5 + value * 60;
                 bar.style.height = `${height}px`;
-                bar.style.opacity = 0.3 + value * 0.7;
+                bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
                 bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
                 bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
@@ -419,7 +419,7 @@
                 const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
                 const height = 5 + value * 60;
                 bar.style.height = `${height}px`;
-                bar.style.opacity = 0.3 + value * 0.7;
+                bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
                 bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
                 bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
