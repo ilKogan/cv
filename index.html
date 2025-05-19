@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -11,6 +12,25 @@
             --gradient-end: #00ffe9;
             --star-count: 200;
             --bar-count: 40;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation:
+                twinkle var(--duration) infinite ease-in-out,
+                move var(--move-duration) linear infinite;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(var(--move-x), var(--move-y));
+            }
         }
 
         * {
@@ -54,8 +74,15 @@
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         .radio-wrapper {
@@ -111,9 +138,19 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.8); opacity: 0.3; }
-            70% { transform: scale(4.2); opacity: 0; }
-            100% { opacity: 0; }
+            0% {
+                transform: scale(0.8);
+                opacity: 0.3;
+            }
+
+            70% {
+                transform: scale(4.2);
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
 
         .play-icon {
@@ -251,58 +288,105 @@
             .play-button {
                 --button-size: 100px;
             }
+
             .play-icon {
                 --icon-size: 20px;
             }
+
             .pause-icon {
                 --icon-size: 30px;
             }
+
             .halo {
                 --halo-size: 150px;
             }
+
             .title {
                 font-size: 24px;
                 letter-spacing: 3px;
             }
+
             .status {
                 font-size: 14px;
             }
+
             .spectrum-container {
                 height: 60px;
             }
+
             .spectrum-bar {
                 width: 2px;
             }
         }
 
-        @media (max-height: 500px) {
-            .title {
-                bottom: 25%;
-                font-size: 18px;
-            }
-            .status {
-                bottom: 20%;
-                font-size: 11px;
-            }
-            .play-button {
-                --button-size: 70px;
-            }
-            .play-icon {
-                --icon-size: 12px;
-            }
-            .pause-icon {
-                --icon-size: 20px;
-            }
-            .halo {
-                --halo-size: 100px;
-            }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation:
+                twinkle var(--duration) infinite ease-in-out,
+                fly var(--fly-duration) linear forwards;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
         }
+
+        @keyframes fly {
+            0% {
+                transform: translate(-50%, -50%) scale(0.1);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform:
+                    translate(calc(-50% + var(--fly-x)),
+                        calc(-50% + var(--fly-y)) scale(1.5);
+                        opacity: 0;
+                }
+            }
+
+            @media (max-height: 500px) {
+                .title {
+                    bottom: 25%;
+                    font-size: 18px;
+                }
+
+                .status {
+                    bottom: 20%;
+                    font-size: 11px;
+                }
+
+                .play-button {
+                    --button-size: 70px;
+                }
+
+                .play-icon {
+                    --icon-size: 12px;
+                }
+
+                .pause-icon {
+                    --icon-size: 20px;
+                }
+
+                .halo {
+                    --halo-size: 100px;
+                }
+            }
     </style>
 </head>
+
 <body>
     <div class="space"></div>
     <div class="stars"></div>
-    
+
     <div class="radio-wrapper">
         <div class="halo"></div>
 
@@ -322,11 +406,11 @@
             <div class="play-icon" id="playIcon"></div>
             <div class="pause-icon hidden" id="pauseIcon"></div>
         </div>
-        
+
         <div class="title">Космическое Радио</div>
         <div class="status" id="status">Нажмите для запуска</div>
     </div>
-    
+
     <audio id="audio" crossorigin="anonymous"></audio>
 
     <script>
@@ -337,13 +421,13 @@
                 this.radioStreamUrl = 'https://a8.radioheart.ru:9042/RH55620';
                 this.corsProxy = 'https://cors-anywhere.herokuapp.com/';
                 this.isPlaying = false;
-                
+
                 this.initElements();
                 this.createStars();
                 this.createSpectrumBars();
                 this.setupEventListeners();
             }
-            
+
             initElements() {
                 this.starsContainer = document.querySelector('.stars');
                 this.audio = document.getElementById('audio');
@@ -352,14 +436,14 @@
                 this.pauseIcon = document.getElementById('pauseIcon');
                 this.statusElement = document.getElementById('status');
                 this.halo = document.querySelector('.halo');
-                
+
                 this.spectrumContainers = {
                     left: document.getElementById('spectrumLeft'),
                     right: document.getElementById('spectrumRight'),
                     bottomLeft: document.getElementById('spectrumBottomLeft'),
                     bottomRight: document.getElementById('spectrumBottomRight')
                 };
-                
+
                 this.spectrumBars = {
                     left: [],
                     right: [],
@@ -367,34 +451,73 @@
                     bottomRight: []
                 };
             }
-            
+
             createStars() {
                 for (let i = 0; i < this.starCount; i++) {
                     const star = document.createElement('div');
                     star.classList.add('star');
-                    
+
                     const size = Math.random() * 3;
-                    const x = Math.random() * 100;
-                    const y = Math.random() * 100;
                     const duration = 2 + Math.random() * 3;
-                    
+                    const flyDuration = 5 + Math.random() * 10; // 5-15 секунд полёта
+                    const angle = Math.random() * Math.PI * 2; // Случайный угол
+                    const distance = 100 + Math.random() * 50; // Дистанция полёта
+                    const flyX = Math.cos(angle) * distance + 'vw';
+                    const flyY = Math.sin(angle) * distance + 'vh';
+
                     star.style.cssText = `
-                        width: ${size}px;
-                        height: ${size}px;
-                        left: ${x}%;
-                        top: ${y}%;
-                        --duration: ${duration}s;
-                    `;
-                    
+            width: ${size}px;
+            height: ${size}px;
+            --duration: ${duration}s;
+            --fly-duration: ${flyDuration}s;
+            --fly-x: ${flyX};
+            --fly-y: ${flyY};
+        `;
+
                     this.starsContainer.appendChild(star);
+
+                    // Пересоздаём звезду после завершения анимации
+                    star.addEventListener('animationend', () => {
+                        star.remove();
+                        this.createSingleStar();
+                    });
                 }
             }
-            
+
+            createSingleStar() {
+                const star = document.createElement('div');
+                star.classList.add('star');
+
+                const size = Math.random() * 3;
+                const duration = 2 + Math.random() * 3;
+                const flyDuration = 5 + Math.random() * 10;
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 50;
+                const flyX = Math.cos(angle) * distance + 'vw';
+                const flyY = Math.sin(angle) * distance + 'vh';
+
+                star.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        --duration: ${duration}s;
+        --fly-duration: ${flyDuration}s;
+        --fly-x: ${flyX};
+        --fly-y: ${flyY};
+    `;
+
+                this.starsContainer.appendChild(star);
+
+                star.addEventListener('animationend', () => {
+                    star.remove();
+                    this.createSingleStar();
+                });
+            }
+
             createSpectrumBars() {
                 Object.keys(this.spectrumContainers).forEach(key => {
                     this.spectrumContainers[key].innerHTML = '';
                     this.spectrumBars[key] = [];
-                    
+
                     for (let i = 0; i < this.barCount; i++) {
                         const bar = document.createElement('div');
                         bar.classList.add('spectrum-bar');
@@ -404,36 +527,36 @@
                     }
                 });
             }
-            
+
             setupEventListeners() {
                 this.playButton.addEventListener('click', () => this.togglePlay());
                 this.playButton.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     this.togglePlay();
                 });
-                
+
                 window.addEventListener('orientationchange', this.handleResize.bind(this));
                 window.addEventListener('resize', this.handleResize.bind(this));
             }
-            
+
             togglePlay() {
                 this.isPlaying ? this.stopRadio() : this.startRadio();
             }
-            
+
             startRadio() {
                 this.statusElement.textContent = 'Подключаемся...';
                 this.audio.src = this.corsProxy + this.radioStreamUrl;
                 this.audio.crossOrigin = 'anonymous';
-                
+
                 const playPromise = this.audio.play();
-                
+
                 if (playPromise !== undefined) {
                     playPromise
                         .then(() => this.onPlaySuccess())
                         .catch(error => this.onPlayError(error));
                 }
             }
-            
+
             onPlaySuccess() {
                 this.isPlaying = true;
                 this.playIcon.classList.add('hidden');
@@ -441,15 +564,15 @@
                 this.statusElement.textContent = 'Соединение установлено';
                 this.setupAudioAnalyser();
             }
-            
+
             onPlayError(error) {
                 console.error('Ошибка воспроизведения:', error);
                 this.statusElement.textContent = 'Ошибка подключения. Попробуйте ещё раз.';
-                
+
                 if (this.audio.src !== this.radioStreamUrl) {
                     this.statusElement.textContent = 'Пробуем прямое подключение...';
                     this.audio.src = this.radioStreamUrl;
-                    
+
                     this.audio.play()
                         .then(() => this.onPlaySuccess())
                         .catch(() => {
@@ -457,47 +580,47 @@
                         });
                 }
             }
-            
+
             setupAudioAnalyser() {
                 if (!window.AudioContext && !window.webkitAudioContext) {
                     console.warn('Web Audio API не поддерживается');
                     return;
                 }
-                
+
                 try {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     this.audioContext = new AudioContext();
                     const source = this.audioContext.createMediaElementSource(this.audio);
-                    
+
                     this.analyser = this.audioContext.createAnalyser();
                     this.analyser.fftSize = 128;
                     source.connect(this.analyser);
                     this.analyser.connect(this.audioContext.destination);
-                    
+
                     this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
                     this.animate();
                 } catch (error) {
                     console.error('Ошибка AudioContext:', error);
                 }
             }
-            
+
             stopRadio() {
                 this.audio.pause();
                 this.isPlaying = false;
                 this.playIcon.classList.remove('hidden');
                 this.pauseIcon.classList.add('hidden');
                 this.statusElement.textContent = 'Воспроизведение остановлено';
-                
+
                 if (this.audioContext) {
                     this.audioContext.close().catch(e => console.log(e));
                     this.audioContext = null;
                 }
-                
+
                 cancelAnimationFrame(this.animationId);
                 this.resetSpectrumBars();
                 this.halo.style.opacity = '0';
             }
-            
+
             resetSpectrumBars() {
                 Object.values(this.spectrumBars).forEach(bars => {
                     bars.forEach(bar => {
@@ -506,40 +629,40 @@
                     });
                 });
             }
-            
+
             animate() {
                 this.animationId = requestAnimationFrame(() => this.animate());
-                
+
                 if (!this.analyser) return;
-                
+
                 this.analyser.getByteFrequencyData(this.dataArray);
                 this.updateHaloEffect();
                 this.updateSpectrumBars();
             }
-            
+
             updateHaloEffect() {
                 const bass = this.dataArray[0] / 255;
                 this.halo.style.opacity = bass.toString();
                 this.halo.style.transform = `translate(-50%, -50%) scale(${1 + bass * 0.5})`;
             }
-            
+
             updateSpectrumBars() {
                 const maxHeight = window.innerHeight < 500 ? 30 : 60;
-                
+
                 Object.keys(this.spectrumBars).forEach(key => {
                     this.spectrumBars[key].forEach((bar, i) => {
                         let index;
-                        
+
                         if (key === 'right' || key === 'bottomRight') {
                             index = this.barCount - i - 1;
                         } else {
                             index = i;
                         }
-                        
+
                         const value = this.dataArray[Math.floor(index * (this.dataArray.length / this.barCount))] / 255;
                         const height = 5 + value * maxHeight;
                         const hue = 180 + value * 2;
-                        
+
                         bar.style.height = `${height}px`;
                         bar.style.opacity = (0.0 + value * 0.7).toString();
                         bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
@@ -547,18 +670,19 @@
                     });
                 });
             }
-            
+
             handleResize() {
                 setTimeout(() => {
                     this.createSpectrumBars();
                 }, 300);
             }
         }
-        
+
         // Initialize the app when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             new CosmicRadio();
         });
     </script>
 </body>
+
 </html>
