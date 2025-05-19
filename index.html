@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Космическое Радио</title>
     <style>
-        body {
+        :root {
+            --primary-color: rgba(0, 150, 255, 0.7);
+            --gradient-start: #00a2ff;
+            --gradient-end: #00ffe9;
+            --star-count: 200;
+            --bar-count: 40;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
             height: 100vh;
             overflow: hidden;
             background: #000;
@@ -18,6 +30,7 @@
             color: white;
             touch-action: manipulation;
         }
+
         .space {
             position: absolute;
             width: 100%;
@@ -25,22 +38,26 @@
             background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
             z-index: -2;
         }
+
         .stars {
             position: absolute;
             width: 100%;
             height: 100%;
             z-index: -1;
         }
+
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
             animation: twinkle var(--duration) infinite ease-in-out;
         }
+
         @keyframes twinkle {
             0%, 100% { opacity: 0.2; }
             50% { opacity: 1; }
         }
+
         .radio-wrapper {
             position: relative;
             width: 100%;
@@ -49,12 +66,13 @@
             justify-content: center;
             align-items: center;
         }
+
+        /* Play Button Styles */
         .play-button {
-            width: 80px;
-            height: 80px;
+            --button-size: 80px;
+            width: var(--button-size);
+            height: var(--button-size);
             border-radius: 50%;
-            /* background: rgba(255, 255, 255, 0.1); */
-            /* border: 2px solid rgba(255, 255, 255, 0.3); */
             cursor: pointer;
             position: absolute;
             top: 45%;
@@ -63,133 +81,134 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 150, 255, 0.0);
+            transition: transform 0.3s;
             z-index: 20;
         }
+
         .play-button:hover {
             transform: translate(-50%, -50%) scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 150, 255, 0.0);
         }
-        .play-button::before {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            /* border: 0px solid rgba(0, 150, 255, 0.5); */
-            animation: pulse 2s infinite;
-        }
+
+        .play-button::before,
         .play-button::after {
             content: '';
             position: absolute;
-            width: 120px;
-            height: 120px;
             border-radius: 50%;
-            border: 1px solid rgba(0, 150, 255, 0.3);
-            animation: pulse 3s infinite;
+            animation: pulse 2s infinite;
         }
+
+        .play-button::before {
+            width: calc(var(--button-size) + 20px);
+            height: calc(var(--button-size) + 20px);
+            animation-delay: 0.5s;
+        }
+
+        .play-button::after {
+            width: calc(var(--button-size) + 40px);
+            height: calc(var(--button-size) + 40px);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            animation-delay: 1s;
+        }
+
         @keyframes pulse {
             0% { transform: scale(0.8); opacity: 0.3; }
             70% { transform: scale(4.2); opacity: 0; }
             100% { opacity: 0; }
         }
+
         .play-icon {
+            --icon-size: 15px;
             width: 0;
             height: 0;
-            border-top: 15px solid transparent;
-            border-bottom: 15px solid transparent;
-            border-left: 25px solid white;
+            border-top: var(--icon-size) solid transparent;
+            border-bottom: var(--icon-size) solid transparent;
+            border-left: calc(var(--icon-size) * 1.66) solid white;
             margin-left: 5px;
-            /* box-shadow: 0 0 20px rgba(0, 150, 255, 0.3); */
             transition: all 0.2s;
         }
+
         .pause-icon {
-            width: 25px;
-            height: 30px;
+            --icon-size: 25px;
+            width: var(--icon-size);
+            height: calc(var(--icon-size) * 1.2);
             display: flex;
             justify-content: space-between;
         }
+
         .pause-icon::before,
         .pause-icon::after {
             content: '';
-            width: 8px;
+            width: 30%;
             height: 100%;
             background: white;
         }
+
         .hidden {
             display: none;
         }
+
         .halo {
+            --halo-size: 120px;
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: var(--halo-size);
+            height: var(--halo-size);
             border-radius: 50%;
             background: radial-gradient(circle, rgba(0, 150, 255, 0.1) 0%, rgba(0, 150, 255, 0) 70%);
             z-index: 5;
             opacity: 0;
             transition: opacity 0.3s;
-            position: absolute;
             top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
         .title {
             position: absolute;
             bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
+            right: 0;
             font-size: 20px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
-            width: 100%;
+            text-shadow: 0 0 10px var(--primary-color);
             text-align: center;
             z-index: 15;
             padding: 0 15px;
-            box-sizing: border-box;
         }
+
         .status {
             position: absolute;
             bottom: 15%;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
+            right: 0;
             font-size: 12px;
             opacity: 0.7;
-            width: 100%;
             text-align: center;
             z-index: 15;
             padding: 0 15px;
-            box-sizing: border-box;
         }
 
-        /* Горизонтальные спектрометры сверху */
+        /* Spectrum Containers */
         .spectrum-container {
             position: absolute;
             width: 100%;
             height: 40px;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .spectrum-container-top {
             top: 40%;
-            left: 0;
             transform: translateY(-50%);
-            z-index: 10;
-            display: flex;
-            justify-content: center;
         }
 
-        /* Нижние спектрометры */
         .spectrum-container-bottom {
-            position: absolute;
-            width: 100%;
-            height: 40px;
             bottom: 51%;
-            left: 0;
             transform: translateY(50%);
-            z-index: 10;
-            display: flex;
-            justify-content: center;
         }
 
-        .spectrum-left, .spectrum-right, .spectrum-bottom-left, .spectrum-bottom-right {
+        .spectrum-side {
             height: 100%;
             display: flex;
             align-items: flex-end;
@@ -205,13 +224,10 @@
             transform: scaleX(-1);
         }
 
-        .spectrum-bottom-left, .spectrum-bottom-right {
-            transform: scaleY(-1);
-        }
-
         .spectrum-bottom-left {
             flex-direction: row-reverse;
             margin-right: 1px;
+            transform: scaleY(-1);
         }
 
         .spectrum-bottom-right {
@@ -220,9 +236,9 @@
         }
 
         .spectrum-bar {
-            width: 2px;
+            width: 1px;
             margin: 0 1px;
-            background: linear-gradient(to top, #00a2ff, #00ffe9);
+            background: linear-gradient(to top, var(--gradient-start), var(--gradient-end));
             border-radius: 2px;
             transform-origin: bottom center;
             transition: height 0.1s ease-out, opacity 0.1s ease-out;
@@ -230,36 +246,19 @@
             opacity: 0.3;
         }
 
-        /* Медиазапросы для адаптации под разные экраны */
+        /* Media Queries */
         @media (min-width: 768px) {
             .play-button {
-                width: 100px;
-                height: 100px;
-            }
-            .play-button::before {
-                width: 120px;
-                height: 120px;
-            }
-            .play-button::after {
-                width: 140px;
-                height: 140px;
+                --button-size: 100px;
             }
             .play-icon {
-                border-top: 20px solid transparent;
-                border-bottom: 20px solid transparent;
-                border-left: 30px solid white;
+                --icon-size: 20px;
             }
             .pause-icon {
-                width: 30px;
-                height: 40px;
-            }
-            .pause-icon::before,
-            .pause-icon::after {
-                width: 10px;
+                --icon-size: 30px;
             }
             .halo {
-                width: 150px;
-                height: 150px;
+                --halo-size: 150px;
             }
             .title {
                 font-size: 24px;
@@ -268,11 +267,11 @@
             .status {
                 font-size: 14px;
             }
-            .spectrum-container, .spectrum-container-bottom {
+            .spectrum-container {
                 height: 60px;
             }
             .spectrum-bar {
-                width: 4px;
+                width: 2px;
             }
         }
 
@@ -286,33 +285,16 @@
                 font-size: 11px;
             }
             .play-button {
-                width: 70px;
-                height: 70px;
-            }
-            .play-button::before {
-                width: 90px;
-                height: 90px;
-            }
-            .play-button::after {
-                width: 110px;
-                height: 110px;
+                --button-size: 70px;
             }
             .play-icon {
-                border-top: 12px solid transparent;
-                border-bottom: 12px solid transparent;
-                border-left: 20px solid white;
+                --icon-size: 12px;
             }
             .pause-icon {
-                width: 20px;
-                height: 25px;
-            }
-            .pause-icon::before,
-            .pause-icon::after {
-                width: 6px;
+                --icon-size: 20px;
             }
             .halo {
-                width: 100px;
-                height: 100px;
+                --halo-size: 100px;
             }
         }
     </style>
@@ -320,241 +302,262 @@
 <body>
     <div class="space"></div>
     <div class="stars"></div>
+    
     <div class="radio-wrapper">
         <div class="halo"></div>
 
-        <!-- Верхние спектрометры -->
-        <div class="spectrum-container">
-            <div class="spectrum-left" id="spectrumLeft"></div>
-            <div class="spectrum-right" id="spectrumRight"></div>
+        <!-- Top Spectrum -->
+        <div class="spectrum-container spectrum-container-top">
+            <div class="spectrum-side spectrum-left" id="spectrumLeft"></div>
+            <div class="spectrum-side spectrum-right" id="spectrumRight"></div>
         </div>
 
-        <!-- Нижние спектрометры -->
-        <div class="spectrum-container-bottom">
-            <div class="spectrum-bottom-left" id="spectrumBottomLeft"></div>
-            <div class="spectrum-bottom-right" id="spectrumBottomRight"></div>
+        <!-- Bottom Spectrum -->
+        <div class="spectrum-container spectrum-container-bottom">
+            <div class="spectrum-side spectrum-bottom-left" id="spectrumBottomLeft"></div>
+            <div class="spectrum-side spectrum-bottom-right" id="spectrumBottomRight"></div>
         </div>
 
         <div class="play-button" id="playButton">
             <div class="play-icon" id="playIcon"></div>
             <div class="pause-icon hidden" id="pauseIcon"></div>
         </div>
+        
         <div class="title">Космическое Радио</div>
         <div class="status" id="status">Нажмите для запуска</div>
     </div>
+    
     <audio id="audio" crossorigin="anonymous"></audio>
 
     <script>
-        const starsContainer = document.querySelector('.stars');
-        const starCount = 200;
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            const size = Math.random() * 3;
-            const x = Math.random() * 100;
-            const y = Math.random() * 100;
-            const duration = 2 + Math.random() * 3;
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
-            star.style.left = `${x}%`;
-            star.style.top = `${y}%`;
-            star.style.setProperty('--duration', `${duration}s`);
-            starsContainer.appendChild(star);
-        }
-
-        const barCount = 30; // Уменьшил количество полос для мобильных устройств
-
-        // Создание спектральных полос
-        function createSpectrumBars(containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ''; // Очищаем контейнер перед созданием новых полос
-            const bars = [];
-            for (let i = 0; i < barCount; i++) {
-                const bar = document.createElement('div');
-                bar.classList.add('spectrum-bar');
-                bar.style.height = `${5 + Math.random() * 10}px`;
-                container.appendChild(bar);
-                bars.push(bar);
+        class CosmicRadio {
+            constructor() {
+                this.starCount = 200;
+                this.barCount = 40;
+                this.radioStreamUrl = 'https://a8.radioheart.ru:9042/RH55620';
+                this.corsProxy = 'https://cors-anywhere.herokuapp.com/';
+                this.isPlaying = false;
+                
+                this.initElements();
+                this.createStars();
+                this.createSpectrumBars();
+                this.setupEventListeners();
             }
-            return bars;
-        }
-
-        const spectrumBarsLeft = createSpectrumBars('spectrumLeft');
-        const spectrumBarsRight = createSpectrumBars('spectrumRight');
-        const spectrumBarsBottomLeft = createSpectrumBars('spectrumBottomLeft');
-        const spectrumBarsBottomRight = createSpectrumBars('spectrumBottomRight');
-
-        // Аудио и кнопка
-        const audio = document.getElementById('audio');
-        const playButton = document.getElementById('playButton');
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-        const statusElement = document.getElementById('status');
-        const halo = document.querySelector('.halo');
-        let isPlaying = false;
-        let audioContext, analyser, dataArray;
-        let animationId;
-
-        const radioStreamUrl = 'https://a8.radioheart.ru:9042/RH55620';
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-        const proxiedStreamUrl = corsProxy + radioStreamUrl;
-
-        playButton.addEventListener('click', togglePlay);
-        playButton.addEventListener('touchstart', function(e) {
-            e.preventDefault(); // Предотвращаем возможные побочные эффекты касания
-            togglePlay();
-        });
-
-        function togglePlay() {
-            if (isPlaying) {
-                stopRadio();
-            } else {
-                startRadio();
+            
+            initElements() {
+                this.starsContainer = document.querySelector('.stars');
+                this.audio = document.getElementById('audio');
+                this.playButton = document.getElementById('playButton');
+                this.playIcon = document.getElementById('playIcon');
+                this.pauseIcon = document.getElementById('pauseIcon');
+                this.statusElement = document.getElementById('status');
+                this.halo = document.querySelector('.halo');
+                
+                this.spectrumContainers = {
+                    left: document.getElementById('spectrumLeft'),
+                    right: document.getElementById('spectrumRight'),
+                    bottomLeft: document.getElementById('spectrumBottomLeft'),
+                    bottomRight: document.getElementById('spectrumBottomRight')
+                };
+                
+                this.spectrumBars = {
+                    left: [],
+                    right: [],
+                    bottomLeft: [],
+                    bottomRight: []
+                };
             }
-        }
-
-        function startRadio() {
-            statusElement.textContent = 'Подключаемся...';
-            audio.src = proxiedStreamUrl;
-            audio.crossOrigin = 'anonymous';
-
-            const onPlaySuccess = () => {
-                isPlaying = true;
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
-                statusElement.textContent = 'Соединение установлено';
-                setupAudioAnalyser();
-            };
-
-            const onPlayError = (error) => {
-                console.error('Ошибка воспроизведения:', error);
-                statusElement.textContent = 'Ошибка подключения. Попробуйте ещё раз.';
-                if (audio.src !== radioStreamUrl) {
-                    statusElement.textContent = 'Пробуем прямое подключение...';
-                    audio.src = radioStreamUrl;
-                    audio.play().then(onPlaySuccess).catch(() => {
-                        statusElement.textContent = 'Не удалось подключиться к радиостанции';
-                    });
+            
+            createStars() {
+                for (let i = 0; i < this.starCount; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    
+                    const size = Math.random() * 3;
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const duration = 2 + Math.random() * 3;
+                    
+                    star.style.cssText = `
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}%;
+                        top: ${y}%;
+                        --duration: ${duration}s;
+                    `;
+                    
+                    this.starsContainer.appendChild(star);
                 }
-            };
-
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.then(onPlaySuccess).catch(onPlayError);
+            }
+            
+            createSpectrumBars() {
+                Object.keys(this.spectrumContainers).forEach(key => {
+                    this.spectrumContainers[key].innerHTML = '';
+                    this.spectrumBars[key] = [];
+                    
+                    for (let i = 0; i < this.barCount; i++) {
+                        const bar = document.createElement('div');
+                        bar.classList.add('spectrum-bar');
+                        bar.style.height = `${5 + Math.random() * 10}px`;
+                        this.spectrumContainers[key].appendChild(bar);
+                        this.spectrumBars[key].push(bar);
+                    }
+                });
+            }
+            
+            setupEventListeners() {
+                this.playButton.addEventListener('click', () => this.togglePlay());
+                this.playButton.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.togglePlay();
+                });
+                
+                window.addEventListener('orientationchange', this.handleResize.bind(this));
+                window.addEventListener('resize', this.handleResize.bind(this));
+            }
+            
+            togglePlay() {
+                this.isPlaying ? this.stopRadio() : this.startRadio();
+            }
+            
+            startRadio() {
+                this.statusElement.textContent = 'Подключаемся...';
+                this.audio.src = this.corsProxy + this.radioStreamUrl;
+                this.audio.crossOrigin = 'anonymous';
+                
+                const playPromise = this.audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => this.onPlaySuccess())
+                        .catch(error => this.onPlayError(error));
+                }
+            }
+            
+            onPlaySuccess() {
+                this.isPlaying = true;
+                this.playIcon.classList.add('hidden');
+                this.pauseIcon.classList.remove('hidden');
+                this.statusElement.textContent = 'Соединение установлено';
+                this.setupAudioAnalyser();
+            }
+            
+            onPlayError(error) {
+                console.error('Ошибка воспроизведения:', error);
+                this.statusElement.textContent = 'Ошибка подключения. Попробуйте ещё раз.';
+                
+                if (this.audio.src !== this.radioStreamUrl) {
+                    this.statusElement.textContent = 'Пробуем прямое подключение...';
+                    this.audio.src = this.radioStreamUrl;
+                    
+                    this.audio.play()
+                        .then(() => this.onPlaySuccess())
+                        .catch(() => {
+                            this.statusElement.textContent = 'Не удалось подключиться к радиостанции';
+                        });
+                }
+            }
+            
+            setupAudioAnalyser() {
+                if (!window.AudioContext && !window.webkitAudioContext) {
+                    console.warn('Web Audio API не поддерживается');
+                    return;
+                }
+                
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.audioContext = new AudioContext();
+                    const source = this.audioContext.createMediaElementSource(this.audio);
+                    
+                    this.analyser = this.audioContext.createAnalyser();
+                    this.analyser.fftSize = 128;
+                    source.connect(this.analyser);
+                    this.analyser.connect(this.audioContext.destination);
+                    
+                    this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                    this.animate();
+                } catch (error) {
+                    console.error('Ошибка AudioContext:', error);
+                }
+            }
+            
+            stopRadio() {
+                this.audio.pause();
+                this.isPlaying = false;
+                this.playIcon.classList.remove('hidden');
+                this.pauseIcon.classList.add('hidden');
+                this.statusElement.textContent = 'Воспроизведение остановлено';
+                
+                if (this.audioContext) {
+                    this.audioContext.close().catch(e => console.log(e));
+                    this.audioContext = null;
+                }
+                
+                cancelAnimationFrame(this.animationId);
+                this.resetSpectrumBars();
+                this.halo.style.opacity = '0';
+            }
+            
+            resetSpectrumBars() {
+                Object.values(this.spectrumBars).forEach(bars => {
+                    bars.forEach(bar => {
+                        bar.style.height = `${5 + Math.random() * 10}px`;
+                        bar.style.opacity = '0.3';
+                    });
+                });
+            }
+            
+            animate() {
+                this.animationId = requestAnimationFrame(() => this.animate());
+                
+                if (!this.analyser) return;
+                
+                this.analyser.getByteFrequencyData(this.dataArray);
+                this.updateHaloEffect();
+                this.updateSpectrumBars();
+            }
+            
+            updateHaloEffect() {
+                const bass = this.dataArray[0] / 255;
+                this.halo.style.opacity = bass.toString();
+                this.halo.style.transform = `translate(-50%, -50%) scale(${1 + bass * 0.5})`;
+            }
+            
+            updateSpectrumBars() {
+                const maxHeight = window.innerHeight < 500 ? 30 : 60;
+                
+                Object.keys(this.spectrumBars).forEach(key => {
+                    this.spectrumBars[key].forEach((bar, i) => {
+                        let index;
+                        
+                        if (key === 'right' || key === 'bottomRight') {
+                            index = this.barCount - i - 1;
+                        } else {
+                            index = i;
+                        }
+                        
+                        const value = this.dataArray[Math.floor(index * (this.dataArray.length / this.barCount))] / 255;
+                        const height = 5 + value * maxHeight;
+                        const hue = 180 + value * 2;
+                        
+                        bar.style.height = `${height}px`;
+                        bar.style.opacity = (0.0 + value * 0.7).toString();
+                        bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
+                        bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
+                    });
+                });
+            }
+            
+            handleResize() {
+                setTimeout(() => {
+                    this.createSpectrumBars();
+                }, 300);
             }
         }
-
-        function setupAudioAnalyser() {
-            if (!window.AudioContext && !window.webkitAudioContext) {
-                console.warn('Web Audio API не поддерживается');
-                return;
-            }
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioContext = new AudioContext();
-                const source = audioContext.createMediaElementSource(audio);
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 128; // Уменьшил для лучшей производительности на мобильных
-                source.connect(analyser);
-                analyser.connect(audioContext.destination);
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-                animate();
-            } catch (error) {
-                console.error('Ошибка AudioContext:', error);
-            }
-        }
-
-        function stopRadio() {
-            audio.pause();
-            isPlaying = false;
-            playIcon.classList.remove('hidden');
-            pauseIcon.classList.add('hidden');
-            statusElement.textContent = 'Воспроизведение остановлено';
-            if (audioContext) {
-                audioContext.close().catch(e => console.log(e));
-                audioContext = null;
-            }
-            cancelAnimationFrame(animationId);
-            [...spectrumBarsLeft, ...spectrumBarsRight, ...spectrumBarsBottomLeft, ...spectrumBarsBottomRight].forEach(bar => {
-                bar.style.height = `${5 + Math.random() * 10}px`;
-                bar.style.opacity = '0.3';
-            });
-            halo.style.opacity = '0';
-        }
-
-        function animate() {
-            animationId = requestAnimationFrame(animate);
-            if (!analyser) return;
-            analyser.getByteFrequencyData(dataArray);
-            const bass = dataArray[0] / 255;
-            halo.style.opacity = bass.toString();
-            halo.style.transform = `translate(-50%, -50%) scale(${1 + bass * 0.5})`;
-
-            spectrumBarsLeft.forEach((bar, i) => {
-                const index = Math.floor(i * (dataArray.length / barCount));
-                const value = dataArray[index] / 255;
-                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60); // Адаптивная высота
-                bar.style.height = `${height}px`;
-                bar.style.opacity = 0.0 + value * 0.7;
-                const hue = 180 + value * 60;
-                bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
-                bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
-            });
-
-            spectrumBarsRight.forEach((bar, i) => {
-                const mirrorIndex = barCount - i - 1;
-                const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
-                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60);
-                bar.style.height = `${height}px`;
-                bar.style.opacity = 0.0 + value * 0.7;
-                const hue = 180 + value * 60;
-                bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
-                bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
-            });
-
-            spectrumBarsBottomLeft.forEach((bar, i) => {
-                const index = Math.floor(i * (dataArray.length / barCount));
-                const value = dataArray[index] / 255;
-                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60);
-                bar.style.height = `${height}px`;
-                bar.style.opacity = 0.0 + value * 0.7;
-                const hue = 180 + value * 60;
-                bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
-                bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
-            });
-
-            spectrumBarsBottomRight.forEach((bar, i) => {
-                const mirrorIndex = barCount - i - 1;
-                const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
-                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60);
-                bar.style.height = `${height}px`;
-                bar.style.opacity = 0.0 + value * 0.7;
-                const hue = 180 + value * 60;
-                bar.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(190, 100%, 50%)`;
-                bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
-            });
-        }
-
-        // Обработчик изменения ориентации экрана
-        window.addEventListener('orientationchange', function() {
-            // Пересоздаем спектральные полосы при изменении ориентации
-            setTimeout(() => {
-                createSpectrumBars('spectrumLeft');
-                createSpectrumBars('spectrumRight');
-                createSpectrumBars('spectrumBottomLeft');
-                createSpectrumBars('spectrumBottomRight');
-            }, 300);
-        });
-
-        // Обработчик изменения размера окна
-        window.addEventListener('resize', function() {
-            // Пересоздаем спектральные полосы при изменении размера
-            setTimeout(() => {
-                createSpectrumBars('spectrumLeft');
-                createSpectrumBars('spectrumRight');
-                createSpectrumBars('spectrumBottomLeft');
-                createSpectrumBars('spectrumBottomRight');
-            }, 300);
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new CosmicRadio();
         });
     </script>
 </body>
