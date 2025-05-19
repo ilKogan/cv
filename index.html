@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Космическое Радио</title>
     <style>
         body {
@@ -16,6 +16,7 @@
             align-items: center;
             font-family: 'Arial', sans-serif;
             color: white;
+            touch-action: manipulation;
         }
         .space {
             position: absolute;
@@ -49,11 +50,11 @@
             align-items: center;
         }
         .play-button {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            /* background: rgba(255, 255, 255, 0.1); */
+            /* border: 2px solid rgba(255, 255, 255, 0.3); */
             cursor: pointer;
             position: absolute;
             top: 45%;
@@ -63,55 +64,56 @@
             justify-content: center;
             align-items: center;
             transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 150, 255, 0.0);
             z-index: 20;
         }
         .play-button:hover {
             transform: translate(-50%, -50%) scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 150, 255, 0.8);
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.0);
         }
         .play-button::before {
             content: '';
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            border: 1px solid rgba(0, 150, 255, 0.5);
+            /* border: 0px solid rgba(0, 150, 255, 0.5); */
             animation: pulse 2s infinite;
         }
         .play-button::after {
             content: '';
             position: absolute;
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             border: 1px solid rgba(0, 150, 255, 0.3);
             animation: pulse 3s infinite;
         }
         @keyframes pulse {
-            0% { transform: scale(0.8); opacity: 0.7; }
-            70% { transform: scale(1.2); opacity: 0; }
+            0% { transform: scale(0.8); opacity: 0.3; }
+            70% { transform: scale(4.2); opacity: 0; }
             100% { opacity: 0; }
         }
         .play-icon {
             width: 0;
             height: 0;
-            border-top: 20px solid transparent;
-            border-bottom: 20px solid transparent;
-            border-left: 30px solid white;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 25px solid white;
             margin-left: 5px;
+            /* box-shadow: 0 0 20px rgba(0, 150, 255, 0.3); */
             transition: all 0.2s;
         }
         .pause-icon {
-            width: 30px;
-            height: 40px;
+            width: 25px;
+            height: 30px;
             display: flex;
             justify-content: space-between;
         }
         .pause-icon::before,
         .pause-icon::after {
             content: '';
-            width: 10px;
+            width: 8px;
             height: 100%;
             background: white;
         }
@@ -120,10 +122,10 @@
         }
         .halo {
             position: absolute;
-            width: 150px;
-            height: 150px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 150, 255, 0.2) 0%, rgba(0, 150, 255, 0) 70%);
+            background: radial-gradient(circle, rgba(0, 150, 255, 0.1) 0%, rgba(0, 150, 255, 0) 70%);
             z-index: 5;
             opacity: 0;
             transition: opacity 0.3s;
@@ -136,31 +138,35 @@
             bottom: 20%;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 24px;
+            font-size: 20px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
             width: 100%;
             text-align: center;
             z-index: 15;
+            padding: 0 15px;
+            box-sizing: border-box;
         }
         .status {
             position: absolute;
             bottom: 15%;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 14px;
+            font-size: 12px;
             opacity: 0.7;
             width: 100%;
             text-align: center;
             z-index: 15;
+            padding: 0 15px;
+            box-sizing: border-box;
         }
 
         /* Горизонтальные спектрометры сверху */
         .spectrum-container {
             position: absolute;
             width: 100%;
-            height: 60px;
+            height: 40px;
             top: 40%;
             left: 0;
             transform: translateY(-50%);
@@ -173,7 +179,7 @@
         .spectrum-container-bottom {
             position: absolute;
             width: 100%;
-            height: 60px;
+            height: 40px;
             bottom: 51%;
             left: 0;
             transform: translateY(50%);
@@ -213,7 +219,7 @@
         }
 
         .spectrum-bar {
-            width: 4px;
+            width: 3px;
             margin: 0 1px;
             background: linear-gradient(to top, #00a2ff, #00ffe9);
             border-radius: 2px;
@@ -221,6 +227,92 @@
             transition: height 0.1s ease-out, opacity 0.1s ease-out;
             box-shadow: 0 0 5px rgba(0, 162, 255, 0.7);
             opacity: 0.3;
+        }
+
+        /* Медиазапросы для адаптации под разные экраны */
+        @media (min-width: 768px) {
+            .play-button {
+                width: 100px;
+                height: 100px;
+            }
+            .play-button::before {
+                width: 120px;
+                height: 120px;
+            }
+            .play-button::after {
+                width: 140px;
+                height: 140px;
+            }
+            .play-icon {
+                border-top: 20px solid transparent;
+                border-bottom: 20px solid transparent;
+                border-left: 30px solid white;
+            }
+            .pause-icon {
+                width: 30px;
+                height: 40px;
+            }
+            .pause-icon::before,
+            .pause-icon::after {
+                width: 10px;
+            }
+            .halo {
+                width: 150px;
+                height: 150px;
+            }
+            .title {
+                font-size: 24px;
+                letter-spacing: 3px;
+            }
+            .status {
+                font-size: 14px;
+            }
+            .spectrum-container, .spectrum-container-bottom {
+                height: 60px;
+            }
+            .spectrum-bar {
+                width: 4px;
+            }
+        }
+
+        @media (max-height: 500px) {
+            .title {
+                bottom: 25%;
+                font-size: 18px;
+            }
+            .status {
+                bottom: 20%;
+                font-size: 11px;
+            }
+            .play-button {
+                width: 70px;
+                height: 70px;
+            }
+            .play-button::before {
+                width: 90px;
+                height: 90px;
+            }
+            .play-button::after {
+                width: 110px;
+                height: 110px;
+            }
+            .play-icon {
+                border-top: 12px solid transparent;
+                border-bottom: 12px solid transparent;
+                border-left: 20px solid white;
+            }
+            .pause-icon {
+                width: 20px;
+                height: 25px;
+            }
+            .pause-icon::before,
+            .pause-icon::after {
+                width: 6px;
+            }
+            .halo {
+                width: 100px;
+                height: 100px;
+            }
         }
     </style>
 </head>
@@ -269,11 +361,12 @@
             starsContainer.appendChild(star);
         }
 
-        const barCount = 30;
+        const barCount = 20; // Уменьшил количество полос для мобильных устройств
 
         // Создание спектральных полос
         function createSpectrumBars(containerId) {
             const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Очищаем контейнер перед созданием новых полос
             const bars = [];
             for (let i = 0; i < barCount; i++) {
                 const bar = document.createElement('div');
@@ -306,6 +399,10 @@
         const proxiedStreamUrl = corsProxy + radioStreamUrl;
 
         playButton.addEventListener('click', togglePlay);
+        playButton.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Предотвращаем возможные побочные эффекты касания
+            togglePlay();
+        });
 
         function togglePlay() {
             if (isPlaying) {
@@ -356,7 +453,7 @@
                 audioContext = new AudioContext();
                 const source = audioContext.createMediaElementSource(audio);
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256;
+                analyser.fftSize = 128; // Уменьшил для лучшей производительности на мобильных
                 source.connect(analyser);
                 analyser.connect(audioContext.destination);
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -395,7 +492,7 @@
             spectrumBarsLeft.forEach((bar, i) => {
                 const index = Math.floor(i * (dataArray.length / barCount));
                 const value = dataArray[index] / 255;
-                const height = 5 + value * 60;
+                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60); // Адаптивная высота
                 bar.style.height = `${height}px`;
                 bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
@@ -406,7 +503,7 @@
             spectrumBarsRight.forEach((bar, i) => {
                 const mirrorIndex = barCount - i - 1;
                 const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
-                const height = 5 + value * 60;
+                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60);
                 bar.style.height = `${height}px`;
                 bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
@@ -417,7 +514,7 @@
             spectrumBarsBottomLeft.forEach((bar, i) => {
                 const index = Math.floor(i * (dataArray.length / barCount));
                 const value = dataArray[index] / 255;
-                const height = 5 + value * 60;
+                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60);
                 bar.style.height = `${height}px`;
                 bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
@@ -428,7 +525,7 @@
             spectrumBarsBottomRight.forEach((bar, i) => {
                 const mirrorIndex = barCount - i - 1;
                 const value = dataArray[Math.floor(mirrorIndex * (dataArray.length / barCount))] / 255;
-                const height = 5 + value * 60;
+                const height = 5 + value * (window.innerHeight < 500 ? 30 : 60);
                 bar.style.height = `${height}px`;
                 bar.style.opacity = 0.0 + value * 0.7;
                 const hue = 180 + value * 60;
@@ -436,6 +533,28 @@
                 bar.style.boxShadow = `0 0 ${2 + value * 8}px hsl(${hue}, 100%, 50%)`;
             });
         }
+
+        // Обработчик изменения ориентации экрана
+        window.addEventListener('orientationchange', function() {
+            // Пересоздаем спектральные полосы при изменении ориентации
+            setTimeout(() => {
+                createSpectrumBars('spectrumLeft');
+                createSpectrumBars('spectrumRight');
+                createSpectrumBars('spectrumBottomLeft');
+                createSpectrumBars('spectrumBottomRight');
+            }, 300);
+        });
+
+        // Обработчик изменения размера окна
+        window.addEventListener('resize', function() {
+            // Пересоздаем спектральные полосы при изменении размера
+            setTimeout(() => {
+                createSpectrumBars('spectrumLeft');
+                createSpectrumBars('spectrumRight');
+                createSpectrumBars('spectrumBottomLeft');
+                createSpectrumBars('spectrumBottomRight');
+            }, 300);
+        });
     </script>
 </body>
 </html>
